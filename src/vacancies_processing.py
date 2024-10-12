@@ -104,3 +104,67 @@ class Vacancy:
             date = datetime.datetime.strptime(hh_vacancy["published_at"], "%Y-%m-%dT%H:%M:%S+%f").strftime("%d.%m.%Y")
             city = hh_vacancy["area"]["name"]
             cls(title, url, employer, salary, salary_currency, date, city)
+
+
+    @staticmethod
+        def filters_the_list(all_vacancies):
+            '''Статический метод для фильтрации списка вакансий по заработной плате'''
+            vacancies = []
+            for vacancy in all_vacancies:
+                if vacancy.get("_Vacancy__salary") is not None and vacancy.get("_Vacancy__salary_currency") == "RUR":
+                    vacancies.append(vacancy)
+            return vacancies
+
+    @classmethod
+    def filtering_vacancies_by_city(cls, city) -> list:
+        '''Метод для фильтрации списка вакансий по названию города'''
+        vacancies_city = []
+        vacancies = Vacancy.filters_the_list(Vacancy.all)
+        for vacancy in vacancies:
+            if vacancy.get('_Vacancy__city') == city:
+                vacancies_city.append(vacancy)
+        return vacancies_city
+
+    @classmethod
+    def filtering_vacancies_by_salary(cls, salary) -> list:
+        '''Метод для фильтрации списка вакансий по заработной плате'''
+        vacancies_salary = []
+        vacancies = Vacancy.filters_the_list(Vacancy.all)
+        for vacancy in vacancies:
+            if vacancy["_Vacancy__salary"] >= salary:
+                vacancies_salary.append(vacancy)
+            else:
+                vacancies_salary = []
+        return vacancies_salary
+
+    @staticmethod
+    def sort_the_list(vacancies) -> list:
+        '''Статический метод для сортировки списка вакансий по заработной плате'''
+        vacancies_filter = Vacancy.filters_the_list(vacancies)
+        vacancies_sort = sorted(vacancies_filter, key=lambda s: s["_Vacancy__salary"], reverse=True)
+        return vacancies_sort
+
+    @staticmethod
+    def print_formatted_vacancies_list(list_vacancies, number_vacancies=None) -> None:
+        '''Выводит данные о вакансиях для пользователя'''
+        if not list_vacancies:
+            print("В файле отсутствуют данные о вакансиях")
+        else:
+            if number_vacancies is None or number_vacancies > len(list_vacancies):
+                number_vacancies = len(list_vacancies)
+            for index in range(number_vacancies):
+                if list_vacancies[index]["_Vacancy__salary"]:
+                    print(
+                        f"Вакансия: {list_vacancies[index]['_Vacancy__title']}, зарплата до "
+                        f"{list_vacancies[index]['_Vacancy__salary']}"
+                        f" {list_vacancies[index]['_Vacancy__salary_currency']}, дата публикации: "
+                        f"{list_vacancies[index]['_Vacancy__date']}, город: {list_vacancies[index]['_Vacancy__city']}, "
+                        f"url: {list_vacancies[index]['_Vacancy__url']}"
+                    )
+                else:
+                    print(
+                        f"Вакансия: {list_vacancies[index]['_Vacancy__title']}, зарплата не указана, дата публикации: "
+                        f"{list_vacancies[index]['_Vacancy__date']}, город: {list_vacancies[index]['_Vacancy__city']}, "
+                        f"url: {list_vacancies[index]['_Vacancy__url']}"
+                    )
+
