@@ -1,1 +1,1 @@
-# DataBase_coursework
+Coursework on DataBase course
