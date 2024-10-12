@@ -107,13 +107,13 @@ class Vacancy:
 
 
     @staticmethod
-        def filters_the_list(all_vacancies):
-            '''Статический метод для фильтрации списка вакансий по заработной плате'''
-            vacancies = []
-            for vacancy in all_vacancies:
-                if vacancy.get("_Vacancy__salary") is not None and vacancy.get("_Vacancy__salary_currency") == "RUR":
-                    vacancies.append(vacancy)
-            return vacancies
+    def filters_the_list(all_vacancies):
+        '''Статический метод для фильтрации списка вакансий по заработной плате'''
+        vacancies = []
+        for vacancy in all_vacancies:
+            if vacancy.get("_Vacancy__salary") is not None and vacancy.get("_Vacancy__salary_currency") == "RUR":
+                vacancies.append(vacancy)
+        return vacancies
 
     @classmethod
     def filtering_vacancies_by_city(cls, city) -> list:
