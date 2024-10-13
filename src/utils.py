@@ -25,7 +25,7 @@ def get_vacancies(employer_id):
     '''Получает вакансии выбранных работодателей с HeadHunter'''
     vacancies = []
     url = 'https://api.hh.ru/vacancies'
-    params = {"employer_id": employer_id, "per_page": 100, "area": 68}
+    params = {"employer_id": employer_id, "per_page": 100, "area": 77}
 
     response = requests.get(url, params=params)
     response_json = response.json()

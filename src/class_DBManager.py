@@ -39,7 +39,7 @@ class DBManager:
     def get_vacancies_with_higher_salary(self):
         '''Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям'''
         self.cur.execute(
-            '''SELECT job_title 
+            '''SELECT job_title
             FROM vacancies
             WHERE salary > (SELECT CEILING(AVG(salary)) 
             FROM vacancies)'''
