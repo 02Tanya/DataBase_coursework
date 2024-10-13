@@ -3,8 +3,8 @@ import psycopg2
 import requests
 
 
-def get_info_about_employers(list_employers_id: list) -> list:
-    '''Получение данных о выбранных работодателях с HeadHunter'''
+def get_info_about_employers(list_employers_id):
+    '''Получает данные о выбранных работодателях с HeadHunter'''
     employers = []
     url = 'https://api.hh.ru/employers/'
     for employer_id in list_employers_id:
@@ -21,8 +21,8 @@ def get_info_about_employers(list_employers_id: list) -> list:
     return employers
 
 
-def get_vacancies(employer_id: int) -> list:
-    '''Получение вакансий выбранных работодателей с HeadHunter'''
+def get_vacancies(employer_id):
+    '''Получает вакансии выбранных работодателей с HeadHunter'''
     vacancies = []
     url = 'https://api.hh.ru/vacancies'
     params = {"employer_id": employer_id, "per_page": 100, "area": 68}
@@ -52,8 +52,8 @@ def get_vacancies(employer_id: int) -> list:
     return vacancies
 
 
-def create_database(params, db_name) -> None:
-    '''Создание БД'''
+def create_database(params, db_name):
+    '''Создает БД'''
     conn = psycopg2.connect(**params)
     conn.autocommit = True
     cur = conn.cursor()
@@ -65,10 +65,10 @@ def create_database(params, db_name) -> None:
     conn.close()
 
 
-def create_employers_table(cur) -> None:
-    '''Создание таблицы с работодателями'''
+def create_employers_table(cur):
+    '''Создает таблицу с работодателями'''
     cur.execute("DROP TABLE IF EXISTS employers")
-    cur.execute("""
+    cur.execute('''
                 CREATE TABLE employers (
                     employer_id SERIAL PRIMARY KEY,
                     company_name TEXT,
@@ -76,13 +76,13 @@ def create_employers_table(cur) -> None:
                     url TEXT,
                     description TEXT
                 )
-            """)
+            ''')
 
 
-def create_vacancies_table(cur) -> None:
-    '''Создание таблицы с вакансиями выбранных работодателей'''
+def create_vacancies_table(cur):
+    '''Создает таблицу с вакансиями выбранных работодателей'''
     cur.execute("DROP TABLE IF EXISTS vacancies")
-    cur.execute("""
+    cur.execute('''
                 CREATE TABLE vacancies (
                     vacancy_id SERIAL PRIMARY KEY,
                     job_title TEXT,
@@ -93,18 +93,18 @@ def create_vacancies_table(cur) -> None:
                     city VARCHAR(50),
                     employer_id SMALLINT REFERENCES employers(employer_id) NOT NULL
                 )
-            """)
+            ''')
 
 
-def insert_data(cur, employers: list[dict], vacancies: dict) -> None:
-    '''Заполнение таблицы полученными данными работодателей и их вакансиями'''
+def insert_data(cur, employers, vacancies):
+    '''Заполняет таблицы полученными данными работодателей и их вакансиями'''
     key = 1
     for employer in employers:
-        query = """
+        query = '''
                 INSERT INTO employers (company_name, description, url, city) 
                 VALUES (%s, %s, %s, %s)
                 RETURNING employer_id
-                """
+                '''
         values = (
             employer['company_name'], employer['description'], employer['url'],
             employer['city']
@@ -116,13 +116,13 @@ def insert_data(cur, employers: list[dict], vacancies: dict) -> None:
         key += 1
 
 
-def insert_vacancies_data(cur, vacancies: list[dict], employer_id) -> None:
-    '''Добавлене данных из списка квакансий в таблицу с вакансиями'''
+def insert_vacancies_data(cur, vacancies, employer_id):
+    '''Добавляет данные из списка квакансий в таблицу с вакансиями'''
     for vacancy in vacancies:
-        query = """
+        query = '''
                 INSERT INTO vacancies (job_title, job_url, publication_date, salary, salary_currency, city, employer_id) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """
+                '''
         values = (
             vacancy['job_title'], vacancy['job_url'], vacancy['date'],
             vacancy['salary'], vacancy['salary_currency'],
