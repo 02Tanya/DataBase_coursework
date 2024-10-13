@@ -83,10 +83,17 @@ def main():
                 print(row[0])
         elif user_input == "5":
             keyword = input("Пожалуйста, введите ключевое слово для поиска вакансий: \n")
-            print(f'\nСписок всех вакансий в которых содержится "{keyword}":')
-            request_5 = DBManager(params).get_vacancies_with_keyword(keyword)
-            for row in request_5:
-                print(row[0])
+            if DBManager(params).get_vacancies_with_keyword(keyword):
+
+                print(f'\nСписок всех вакансий в которых содержится "{keyword}":')
+                request_5 = DBManager(params).get_vacancies_with_keyword(keyword)
+                for row in request_5:
+                    print(row[0])
+                continue
+            else:
+                print("По вашему запросу ничего не найдено. Попробуйте изменить параметры запроса.")
+                continue
+
         else:
             print("\nРабота программы завершена. Будем рады снова помочь Вам с поиском:)")
             break
@@ -98,7 +105,7 @@ if __name__ == '__main__':
     print(
         "* * * Добрый день! Вас приветствует помощник в подборе вакансий * * *\n "
         "      -------------------------------------------------------\n"
-        "\n       Подождите, пожалуйста, данные сейчас загрузятся)"
+        "\n       Подождите, пожалуйста, данные сейчас загрузятся :)"
     )
     print("\u001b[0m")
     main()
