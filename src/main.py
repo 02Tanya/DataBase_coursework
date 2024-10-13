@@ -1,4 +1,5 @@
 import psycopg2
+from time import sleep
 
 from config import config
 from class_DBManager import DBManager
@@ -43,36 +44,60 @@ def main():
         if conn is not None:
             conn.close()
 
-    print('\nСписок компаний и количество вакансий у каждой компании:')
-    request_1 = DBManager(params).get_companies_and_vacancies_count()
-    for row in request_1:
-        print(f'{row[0]} - {row[1]}')
 
-    print('\nСписок всех вакансий:')
-    request_2 = DBManager(params).get_all_vacancies()
-    for row in request_2:
-        print(row)
 
-    print('\nСредняя зарплата по вакансиям:')
-    request_3 = DBManager(params).get_avg_salary()
-    print(request_3)
+    while True:
+        print("\u001b[36m")
+        sleep(1)
+        print(
+            "Вы можете выбрать следующие действия:\n"
+            "1 - Вывести список компаний и количество вакансий у каждой компании;\n"
+            "2 - Вывести список всех вакансий;\n"
+            "3 - Вывести среднюю величину заработной платы по вакансиям;\n"
+            "4 - Вывести список всех вакансий, у которых зарплата выше средней;\n"
+            "5 - Поиск вакансий по ключевому слову;\n"
+            "6 - Выход"
+        )
+        print("\u001b[0m")
+        user_input = input("Укажите номер выбранного Вами действия: ")
 
-    print(
-        '\nСписок всех вакансий, у которых зарплата выше средней по всем '
-        'вакансиям:'
-    )
-    request_4 = DBManager(params).get_vacancies_with_higher_salary()
-    for row in request_4:
-        print(row[0])
-
-    keyword = 'Python разработчик'
-    print(f'\nСписок всех вакансий в которых содержится "{keyword}":')
-    request_5 = DBManager(params).get_vacancies_with_keyword(keyword)
-    for row in request_5:
-        print(row[0])
+        if user_input == "1":
+            print('\nСписок компаний и количество вакансий каждой компании:')
+            request_1 = DBManager(params).get_companies_and_vacancies_count()
+            for row in request_1:
+                print(f'{row[0]} - {row[1]}')
+            continue
+        elif user_input == "2":
+            print('\nСписок всех вакансий:')
+            request_2 = DBManager(params).get_all_vacancies()
+            for row in request_2:
+                print(row)
+        elif user_input == "3":
+            print('\nСредняя заработная плата по вакансиям:')
+            request_3 = DBManager(params).get_avg_salary()
+            print(request_3)
+        elif user_input == "4":
+            print('\nСписок всех вакансий, у которых заработная плата выше средней:')
+            request_4 = DBManager(params).get_vacancies_with_higher_salary()
+            for row in request_4:
+                print(row[0])
+        elif user_input == "5":
+            keyword = input("Пожалуйста, введите ключевое слово для поиска вакансий: \n")
+            print(f'\nСписок всех вакансий в которых содержится "{keyword}":')
+            request_5 = DBManager(params).get_vacancies_with_keyword(keyword)
+            for row in request_5:
+                print(row[0])
+        else:
+            print("\nРабота программы завершена. Будем рады снова помочь Вам с поиском:)")
+            break
 
     DBManager(params).closes_the_connection_to_the_database()
 
-
 if __name__ == '__main__':
+    print("\u001b[36m")
+    print(
+        "* * * Добрый день! Вас приветствует помощник в подборе вакансий. * * *\n "
+        "      -------------------------------------------------------"
+    )
+    print("\u001b[0m")
     main()
